@@ -26,15 +26,15 @@ TEACHER_CKPT="MiniLLM/SFT-OPT-6.7B"
 # data
 DATA_DIR="${BASE_PATH}/processed_data/dolly/full/opt/"
 # hp
-BATCH_SIZE=8
+BATCH_SIZE=16
 LR=0.0005
-GRAD_ACC=2
+GRAD_ACC=1
 EVAL_BATCH_SIZE=64
 EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/opt/train/spanfdd_1.3B_6.7B-v2"
+SAVE_PATH="${BASE_PATH}/results/opt/train/spanfdd_1.3B_6.7B_entropy"
 # seed
 SEED=42
 

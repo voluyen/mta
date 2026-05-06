@@ -26,8 +26,8 @@ max_length: 256
 max_prompt_length: 128
 num_train_epochs: 5
 optim: adamw_torch
-output_dir: ./distillm-2-master/outputs/qwen1.5-0.5b-span-distillm2
-run_name: qwen1.5-0.5b-span-distillm2
+output_dir: ./distillm-2-master/outputs/qwen1.5-0.5b-span-distillm2-entropy
+run_name: qwen1.5-0.5b-span-distillm2-entropy
 per_device_train_batch_size: 4
 per_device_eval_batch_size: 4
 push_to_hub: false

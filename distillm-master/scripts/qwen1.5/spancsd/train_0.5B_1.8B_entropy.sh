@@ -25,15 +25,15 @@ TEACHER_CKPT="VoCuc/Qwen1.5_1.8B_SFT"
 # data
 DATA_DIR="${BASE_PATH}/processed_data/dolly/full/qwen/"
 # hp
-BATCH_SIZE=8
+BATCH_SIZE=16
 LR=0.0001
-GRAD_ACC=2
+GRAD_ACC=1
 EVAL_BATCH_SIZE=64
 EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen1.5/spandistillm_0.5B_1.8B_on_v5"
+SAVE_PATH="${BASE_PATH}/results/qwen1.5/spancsd_0.5B_1.8B_entropy"
 # seed
 SEED=42
 

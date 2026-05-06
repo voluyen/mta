@@ -34,7 +34,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/gpt2/train/spandistill_0.1B_1.5B_on_v5"
+SAVE_PATH="${BASE_PATH}/results/gpt2/train/spancsd_0.1B_1.5B_entropy"
 # seed
 SEED=42
 

@@ -54,10 +54,9 @@ setup_env() {
     log "Installing pip packages..."
     pip install \
         transformers==4.43.2 \
-        vllm==0.5.4 \
         peft==0.9.0 \
         trl==0.9.6 \
-        deepspeed==0.15.0 \
+        deepspeed \
         accelerate \
         datasets \
         sentencepiece \

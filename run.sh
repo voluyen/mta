@@ -52,6 +52,7 @@ setup_env() {
         --index-url https://download.pytorch.org/whl/cu128
 
     log "Installing pip packages..."
+    export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
     pip install \
         transformers==4.43.2 \
         peft==0.9.0 \
@@ -110,6 +111,7 @@ run_training() {
 # =============================================================================
 cd "${REPO_ROOT}"
 
+rm -f "${VENV_MARKER}"
 setup_env
 run_training
 

@@ -8,7 +8,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${REPO_ROOT}/logs"
-VENV_DIR="${REPO_ROOT}/.venv"
+CONDA_ENV="mta"
 VENV_MARKER="${REPO_ROOT}/.env_installed"
 
 mkdir -p "${LOG_DIR}"
@@ -30,14 +30,17 @@ run_script() {
 setup_env() {
     log "=== Environment Setup ==="
 
-    if [ ! -d "${VENV_DIR}" ]; then
-        log "Creating Python venv at ${VENV_DIR}..."
-        python3 -m venv "${VENV_DIR}"
+    # Activate conda
+    source "$(conda info --base)/etc/profile.d/conda.sh"
+
+    if ! conda env list | grep -q "^${CONDA_ENV} "; then
+        log "Creating conda env '${CONDA_ENV}' with Python 3.11..."
+        conda create -y -n "${CONDA_ENV}" python=3.11
     else
-        log "Venv already exists, activating."
+        log "Conda env '${CONDA_ENV}' already exists."
     fi
 
-    source "${VENV_DIR}/bin/activate"
+    conda activate "${CONDA_ENV}"
 
     if [ -f "${VENV_MARKER}" ]; then
         log "Packages already installed (delete ${VENV_MARKER} to reinstall)."
@@ -52,8 +55,7 @@ setup_env() {
         --index-url https://download.pytorch.org/whl/cu128
 
     log "Installing pip packages..."
-    export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
-    pip install \
+    pip install --prefer-binary \
         transformers==4.43.2 \
         peft==0.9.0 \
         trl==0.9.6 \
@@ -111,7 +113,10 @@ run_training() {
 # =============================================================================
 cd "${REPO_ROOT}"
 
-rm -f "${VENV_MARKER}"
+if [ -f "${VENV_MARKER}" ]; then
+    log "Found existing install marker, removing to force reinstall..."
+    rm "${VENV_MARKER}"
+fi
 setup_env
 run_training
 

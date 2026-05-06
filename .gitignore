@@ -47,39 +47,6 @@ coverage.xml
 profile_default/
 ipython_config.py
 
-# Type checkers
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.pyre/
-.pytype/
-cython_debug/
-
-# ML / Training outputs
-results/
-ckpts/
-checkpoints/
-outputs/
-eval_outputs/
-wandb/
-runs/
-logs/
-*.log
-
-# Model weights & binaries
-*.bin
-*.safetensors
-*.pt
-*.pth
-*.ckpt
-*.h5
-
-# Secrets & environment
-.env
-.env.*
-*.pem
-*.key
-
 # OS
 .DS_Store
 Thumbs.db

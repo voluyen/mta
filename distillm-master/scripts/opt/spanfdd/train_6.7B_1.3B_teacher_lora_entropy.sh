@@ -108,7 +108,7 @@ OPTS+=" --student-gen"
 OPTS+=" --teacher_layer_mapping 20 23 26 29 32"
 OPTS+=" --student_layer_mapping 16 18 20 22 24"
 OPTS+=" --split_layer_mapping 0 1 5 5"
-# OPTS+=" --entropy_weight"
+OPTS+=" --entropy_weight"
 
 OPTS+=" --gen-num-beams 1"
 OPTS+=" --gen-top-p 1.0"

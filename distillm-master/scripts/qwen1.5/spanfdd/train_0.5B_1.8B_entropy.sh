@@ -18,23 +18,22 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=./distillm-master
-
-CKPT_NAME="opt-1.3B"
-CKPT="facebook/opt-1.3b"
-TEACHER_CKPT_NAME="opt-1.3B"
-TEACHER_CKPT="MiniLLM/SFT-OPT-6.7B"
+CKPT_NAME="qwen1.5-0.5B"
+CKPT="Qwen/Qwen1.5-0.5B"
+TEACHER_CKPT_NAME="qwen1.5-1.8B"
+TEACHER_CKPT="VoCuc/Qwen1.5_1.8B_SFT"
 # data
-DATA_DIR="${BASE_PATH}/processed_data/dolly/full/opt/"
+DATA_DIR="${BASE_PATH}/processed_data/dolly/full/qwen/"
 # hp
 BATCH_SIZE=8
-LR=0.0005
+LR=0.0001
 GRAD_ACC=2
 EVAL_BATCH_SIZE=64
 EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/opt/train/spanfdd_1.3B_6.7B-v2"
+SAVE_PATH="${BASE_PATH}/results/qwen1.5/spanfdd_0.5B_1.8B"
 # seed
 SEED=42
 
@@ -47,12 +46,10 @@ OPTS+=" --teacher-model-path ${TEACHER_CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --teacher-ckpt-name ${TEACHER_CKPT_NAME}"
 OPTS+=" --teacher-model-fp16"
+OPTS+=" --model-type qwen"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
-OPTS+=" --model-type opt"
-# OPTS+=" --gradient-checkpointing"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
-# OPTS+=" --lm-data-dir ${LM_DATA_DIR}"
 OPTS+=" --num-workers 1"
 OPTS+=" --dev-num 1000"
 # hp
@@ -66,7 +63,6 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 1.0"
-# OPTS+=" --w-span-loss 3.0"
 OPTS+=" --w-span-loss 2.0"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
@@ -80,13 +76,6 @@ OPTS+=" --eval-interval -1"
 OPTS+=" --log-interval 10"
 OPTS+=" --mid-log-num -1"
 OPTS+=" --save ${SAVE_PATH}"
-# lora
-OPTS+=" --peft lora"
-OPTS+=" --do-train"
-# OPTS+=" --peft-name ${PEFT_CKPT_NAME}"
-# OPTS+=" --peft-path ${PEFT_CKPT}"
-# OPTS+=" --teacher-peft-name ${TEACHER_PEFT_CKPT_NAME}"
-# OPTS+=" --teacher-peft-path ${TEACHER_PEFT_CKPT}"
 # seed
 OPTS+=" --seed ${SEED}"
 # deepspeed
@@ -102,13 +91,10 @@ OPTS+=" --temperature 1.0"
 # distillm
 OPTS+=" --student-gen"
 
-# OPTS+=" --teacher_layer_mapping 17 20 23 26 29 32"
-# OPTS+=" --student_layer_mapping 14 16 18 20 22 24"
-# OPTS+=" --split_layer_mapping 0 1 6 6"
-OPTS+=" --teacher_layer_mapping 20 23 26 29 32"
-OPTS+=" --student_layer_mapping 16 18 20 22 24"
-OPTS+=" --split_layer_mapping 0 1 5 5"
-# OPTS+=" --entropy_weight"
+OPTS+=" --teacher_layer_mapping 4 8 16"
+OPTS+=" --student_layer_mapping 4 8 16"
+OPTS+=" --split_layer_mapping 0 1 3 3"
+OPTS+=" --entropy_weight"
 
 OPTS+=" --gen-num-beams 1"
 OPTS+=" --gen-top-p 1.0"
@@ -126,4 +112,4 @@ CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/span_fdd_finetune.py ${OPTS} $@"
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"
 mkdir -p ${SAVE_PATH}
-${CMD}
+CODE_BASE=HF ${CMD}

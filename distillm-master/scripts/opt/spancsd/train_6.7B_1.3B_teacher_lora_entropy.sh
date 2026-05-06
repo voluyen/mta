@@ -34,7 +34,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/opt/train/spanfdd_1.3B_6.7B-v2"
+SAVE_PATH="${BASE_PATH}/results/opt/train/spandistillm_1.3B_6.7B-v2"
 # seed
 SEED=42
 
@@ -66,8 +66,7 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 1.0"
-# OPTS+=" --w-span-loss 3.0"
-OPTS+=" --w-span-loss 2.0"
+OPTS+=" --w-span-loss 3.0"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 128"
@@ -93,22 +92,19 @@ OPTS+=" --seed ${SEED}"
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # type
-OPTS+=" --type adaptive-srkl"
+OPTS+=" --type adaptive-csd"
 # gen
 OPTS+=" --do-sample"
 OPTS+=" --top-k 0"
 OPTS+=" --top-p 1.0"
 OPTS+=" --temperature 1.0"
 # distillm
-OPTS+=" --student-gen"
+# OPTS+=" --student-gen"
 
-# OPTS+=" --teacher_layer_mapping 17 20 23 26 29 32"
-# OPTS+=" --student_layer_mapping 14 16 18 20 22 24"
-# OPTS+=" --split_layer_mapping 0 1 6 6"
 OPTS+=" --teacher_layer_mapping 20 23 26 29 32"
 OPTS+=" --student_layer_mapping 16 18 20 22 24"
 OPTS+=" --split_layer_mapping 0 1 5 5"
-# OPTS+=" --entropy_weight"
+OPTS+=" --entropy_weight"
 
 OPTS+=" --gen-num-beams 1"
 OPTS+=" --gen-top-p 1.0"
@@ -121,7 +117,7 @@ export NCCL_DEBUG=""
 export WANDB_DISABLED=True
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONPATH=${BASE_PATH}
-CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/span_fdd_finetune.py ${OPTS} $@"
+CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/span_finetune.py ${OPTS} $@"
 
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"

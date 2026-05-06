@@ -47,9 +47,9 @@ setup_env() {
     log "Upgrading pip..."
     pip install --upgrade pip
 
-    log "Installing PyTorch 2.4.0 with CUDA 12.1..."
-    pip install torch==2.4.0 torchvision torchaudio \
-        --index-url https://download.pytorch.org/whl/cu121
+    log "Installing PyTorch 2.9.0 with CUDA 12.8..."
+    pip install torch==2.9.0 torchvision torchaudio \
+        --index-url https://download.pytorch.org/whl/cu128
 
     log "Installing pip packages..."
     pip install \

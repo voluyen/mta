@@ -5,7 +5,7 @@
 # ==========================================
 
 # --- GPU selection ---
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
 export TOKENIZERS_PARALLELISM=false
 
 # --- Accelerate launch ---

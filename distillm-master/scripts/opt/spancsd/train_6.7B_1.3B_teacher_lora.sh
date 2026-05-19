@@ -73,7 +73,7 @@ OPTS+=" --max-prompt-length 128"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
-OPTS+=" --eval-gen"
+# OPTS+=" --eval-gen"
 OPTS+=" --save-interval -1"
 OPTS+=" --eval-interval -1"
 OPTS+=" --log-interval 10"

@@ -16,7 +16,7 @@ mkdir -p "${LOG_DIR}"
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 RESULTS_DIR="${REPO_ROOT}/distillm-master/results"
-MOUNT_DIR="/mnt/mta"
+MOUNT_DIR="/mnt/mta/"
 
 run_script() {
     local label="$1"
@@ -99,7 +99,7 @@ setup_env() {
 run_training() {
     log "=== Training ==="
 
-    run_script "gpt2_spancsd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B.sh"
+    # run_script "gpt2_spancsd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B.sh"
     run_script "gpt2_ablation_word"    "distillm-master/scripts/gpt2/ablation/word_level.sh"
     run_script "gpt2_ablation_phrase"  "distillm-master/scripts/gpt2/ablation/phrase_level.sh"
     run_script "opt_spancsd"           "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"

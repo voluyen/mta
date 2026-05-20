@@ -34,7 +34,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/opt/train/spandistillm_1.3B_6.7B-v2"
+SAVE_PATH="${BASE_PATH}/results/opt/train/spancsd_1.3B_6.7B"
 # seed
 SEED=42
 

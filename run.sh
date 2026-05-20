@@ -88,24 +88,24 @@ run_training() {
     log "=== Training ==="
 
     # --- distillm-master: GPT-2 ---
-    run_script "gpt2_spancsd_entropy"    "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_entropy.sh"
-    run_script "gpt2_spandistillm_entropy" "distillm-master/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh"
-    run_script "gpt2_spanfdd_entropy"    "distillm-master/scripts/gpt2/spanfdd/train_0.1B_1.5B_entropy.sh"
+    # run_script "gpt2_spancsd_entropy"    "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_entropy.sh"
+    # run_script "gpt2_spandistillm_entropy" "distillm-master/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh"
+    # run_script "gpt2_spanfdd_entropy"    "distillm-master/scripts/gpt2/spanfdd/train_0.1B_1.5B_entropy.sh"
 
     # --- distillm-master: OPT ---
-    run_script "opt_spancsd_entropy"     "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora_entropy.sh"
-    run_script "opt_spanfdd_entropy"     "distillm-master/scripts/opt/spanfdd/train_6.7B_1.3B_teacher_lora_entropy.sh"
-    run_script "opt_spandistillm_entropy" "distillm-master/scripts/opt/spandistillm/train_6.7B_1.3B_teacher_lora_entropy.sh"
+    run_script "opt_spancsd"     "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"
+    # run_script "opt_spanfdd_entropy"     "distillm-master/scripts/opt/spanfdd/train_6.7B_1.3B_teacher_lora_entropy.sh"
+    # run_script "opt_spandistillm_entropy" "distillm-master/scripts/opt/spandistillm/train_6.7B_1.3B_teacher_lora_entropy.sh"
 
     # --- distillm-master: Qwen1.5 ---
-    run_script "qwen1.5_spancsd_entropy"    "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_entropy.sh"
-    run_script "qwen1.5_spanfdd_entropy"    "distillm-master/scripts/qwen1.5/spanfdd/train_0.5B_1.8B_entropy.sh"
-    run_script "qwen1.5_spandistillm_entropy" "distillm-master/scripts/qwen1.5/spandistillm/train_0.5B_1.8B_entropy.sh"
+    # run_script "qwen1.5_spancsd_entropy"    "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_entropy.sh"
+    # run_script "qwen1.5_spanfdd_entropy"    "distillm-master/scripts/qwen1.5/spanfdd/train_0.5B_1.8B_entropy.sh"
+    # run_script "qwen1.5_spandistillm_entropy" "distillm-master/scripts/qwen1.5/spandistillm/train_0.5B_1.8B_entropy.sh"
 
     # --- distillm-2-master ---
-    run_script "distillm2_gpt2_entropy"   "distillm-2-master/scripts/gpt2/span_distillm_2_gpt2_0.1b_entropy.sh"
-    run_script "distillm2_opt_entropy"    "distillm-2-master/scripts/opt/span_distillm_2_opt_1.3b_entropy.sh"
-    run_script "distillm2_qwen1.5_entropy" "distillm-2-master/scripts/qwen1.5/span_distillm_2_qwen1.5_0.5b_entropy.sh"
+    # run_script "distillm2_gpt2_entropy"   "distillm-2-master/scripts/gpt2/span_distillm_2_gpt2_0.1b_entropy.sh"
+    # run_script "distillm2_opt_entropy"    "distillm-2-master/scripts/opt/span_distillm_2_opt_1.3b_entropy.sh"
+    # run_script "distillm2_qwen1.5_entropy" "distillm-2-master/scripts/qwen1.5/span_distillm_2_qwen1.5_0.5b_entropy.sh"
 }
 
 # =============================================================================

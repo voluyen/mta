@@ -30,22 +30,18 @@ run_script() {
 setup_env() {
     log "=== Environment Setup ==="
 
-    if ! command -v conda &>/dev/null; then
-        log "conda not found, skipping environment setup."
-        return
-    fi
-
-    # Activate conda
-    source "$(conda info --base)/etc/profile.d/conda.sh"
-
-    if ! conda env list | grep -q "^${CONDA_ENV} "; then
-        log "Creating conda env '${CONDA_ENV}' with Python 3.11..."
-        conda create -y -n "${CONDA_ENV}" python=3.11
+    if command -v conda &>/dev/null; then
+        source "$(conda info --base)/etc/profile.d/conda.sh"
+        if ! conda env list | grep -q "^${CONDA_ENV} "; then
+            log "Creating conda env '${CONDA_ENV}' with Python 3.11..."
+            conda create -y -n "${CONDA_ENV}" python=3.11
+        else
+            log "Conda env '${CONDA_ENV}' already exists."
+        fi
+        conda activate "${CONDA_ENV}"
     else
-        log "Conda env '${CONDA_ENV}' already exists."
+        log "conda not found, installing into current Python environment."
     fi
-
-    conda activate "${CONDA_ENV}"
 
     if [ -f "${VENV_MARKER}" ]; then
         log "Packages already installed (delete ${VENV_MARKER} to reinstall)."

@@ -15,6 +15,9 @@ mkdir -p "${LOG_DIR}"
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
+RESULTS_DIR="${REPO_ROOT}/distillm-master/results"
+MOUNT_DIR="/mnt/mta"
+
 run_script() {
     local label="$1"
     local script="$2"
@@ -22,6 +25,14 @@ run_script() {
     log "Starting: ${label}"
     bash "${REPO_ROOT}/${script}" 2>&1 | tee "${logfile}"
     log "Done: ${label} — log saved to ${logfile}"
+    if [ -d "${RESULTS_DIR}" ]; then
+        log "Copying results to ${MOUNT_DIR}..."
+        mkdir -p "${MOUNT_DIR}"
+        cp -r "${RESULTS_DIR}/." "${MOUNT_DIR}/"
+        log "Results copied."
+    else
+        log "No results directory found, skipping copy."
+    fi
 }
 
 # =============================================================================

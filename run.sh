@@ -64,7 +64,7 @@ setup_env() {
         --index-url https://download.pytorch.org/whl/cu128
 
     log "Installing packages..."
-    uv pip install --system --prefer-binary \
+    uv pip install --system \
         transformers==4.43.2 \
         peft==0.9.0 \
         trl==0.9.6 \

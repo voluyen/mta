@@ -60,11 +60,11 @@ setup_env() {
     fi
 
     log "Installing PyTorch 2.9.0 with CUDA 12.8..."
-    %uv pip install torch==2.9.0 torchvision torchaudio \
+    uv pip install torch==2.9.0 torchvision torchaudio \
         --index-url https://download.pytorch.org/whl/cu128
 
     log "Installing packages..."
-    %uv pip install --prefer-binary \
+    uv pip install --prefer-binary \
         transformers==4.43.2 \
         peft==0.9.0 \
         trl==0.9.6 \

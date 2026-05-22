@@ -99,10 +99,11 @@ setup_env() {
 run_training() {
     log "=== Training ==="
 
-    # run_script "gpt2_spancsd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B.sh"
-    run_script "gpt2_ablation_word"    "distillm-master/scripts/gpt2/ablation/word_level.sh"
-    run_script "gpt2_ablation_phrase"  "distillm-master/scripts/gpt2/ablation/phrase_level.sh"
-    run_script "opt_spancsd"           "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"
+    run_script "gpt2_csd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_csd.sh"
+    run_script "gpt2_spancsd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_spancsd.sh"
+    # run_script "gpt2_ablation_word"    "distillm-master/scripts/gpt2/ablation/word_level.sh"
+    # run_script "gpt2_ablation_phrase"  "distillm-master/scripts/gpt2/ablation/phrase_level.sh"
+    # run_script "opt_spancsd"           "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"
 }
 
 # =============================================================================

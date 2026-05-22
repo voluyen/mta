@@ -1,6 +1,6 @@
 #! /bin/bash
 
-GPUS=(1)
+GPUS=(0)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 export TOKENIZERS_PARALLELISM=false
 
@@ -25,15 +25,15 @@ TEACHER_CKPT="VoCuc/Qwen1.5_1.8B_SFT"
 # data
 DATA_DIR="${BASE_PATH}/processed_data/dolly/full/qwen/"
 # hp
-BATCH_SIZE=8
+BATCH_SIZE=16
 LR=0.0001
-GRAD_ACC=2
+GRAD_ACC=1
 EVAL_BATCH_SIZE=64
 EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen1.5/spandistillm_0.5B_1.8B_on_v5"
+SAVE_PATH="${BASE_PATH}/results/qwen1.5/spancsd_0.5B_1.8B"
 # seed
 SEED=42
 
@@ -71,7 +71,7 @@ OPTS+=" --max-prompt-length 128"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
-OPTS+=" --eval-gen"
+# OPTS+=" --eval-gen"
 OPTS+=" --save-interval -1"
 OPTS+=" --eval-interval -1"
 OPTS+=" --log-interval 10"

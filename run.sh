@@ -16,7 +16,7 @@ mkdir -p "${LOG_DIR}"
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
 RESULTS_DIR="${REPO_ROOT}/distillm-master/results"
-MOUNT_DIR="/mnt/mta/"
+MOUNT_DIR="/mnt/mta/span_csd/"
 
 run_script() {
     local label="$1"
@@ -59,15 +59,12 @@ setup_env() {
         return
     fi
 
-    log "Upgrading pip..."
-    pip install --upgrade pip
-
     log "Installing PyTorch 2.9.0 with CUDA 12.8..."
-    pip install torch==2.9.0 torchvision torchaudio \
+    %uv pip install torch==2.9.0 torchvision torchaudio \
         --index-url https://download.pytorch.org/whl/cu128
 
-    log "Installing pip packages..."
-    pip install --prefer-binary \
+    log "Installing packages..."
+    %uv pip install --prefer-binary \
         transformers==4.43.2 \
         peft==0.9.0 \
         trl==0.9.6 \
@@ -99,8 +96,8 @@ setup_env() {
 run_training() {
     log "=== Training ==="
 
-    run_script "gpt2_csd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_csd.sh"
-    run_script "gpt2_spancsd"          "distillm-master/scripts/gpt2/spancsd/train_0.1B_1.5B_spancsd.sh"
+    run_script "qwen1.5_csd"          "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
+    # run_script "qwen1.5_spancsd"          "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
     # run_script "gpt2_ablation_word"    "distillm-master/scripts/gpt2/ablation/word_level.sh"
     # run_script "gpt2_ablation_phrase"  "distillm-master/scripts/gpt2/ablation/phrase_level.sh"
     # run_script "opt_spancsd"           "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"

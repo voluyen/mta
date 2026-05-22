@@ -148,11 +148,31 @@ class DistributedMMapIndexedDataset(torch.utils.data.Dataset):
         return state, history
 
     def __getstate__(self):
-        return self._path + self._name + "_%d"%(self._state)
+        return {
+            '_path': self._path,
+            '_name': self._name,
+            '_cache': self._cache,
+            '_state': self._state,
+            '_rank_number': self._rank_number,
+            '_rank_total': self._rank_total,
+            'max_state': self.max_state,
+            'total_length': self.total_length,
+            'history': self.history,
+        }
 
     def __setstate__(self, state):
-        self._state = state
-        self._do_init(self._path, self._name, self._cache, self._state)
+        self._path = state['_path']
+        self._name = state['_name']
+        self._cache = state['_cache']
+        self._rank_number = state['_rank_number']
+        self._rank_total = state['_rank_total']
+        self.max_state = state['max_state']
+        self.total_length = state['total_length']
+        self.history = state['history']
+        self._index = None
+        self._bin_buffer = None
+        self._bin_buffer_mmap = None
+        self._do_init(self._path, self._name, self._cache, state['_state'])
 
     def _do_init(self, path, name, cache, state):
         if self._bin_buffer_mmap is not None:

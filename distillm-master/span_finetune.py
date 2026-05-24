@@ -309,7 +309,10 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
                 # prompt_lengths = gen_data['attention_mask'].sum(dim=-1)
                 input_texts = tokenizer.batch_decode(model_batch['input_ids'], skip_special_tokens=False)
-                offsets_mapping = tokenizer(input_texts, return_offsets_mapping=True, padding=True,
+                offsets_mapping = tokenizer(input_texts, return_offsets_mapping=True,
+                                            padding='max_length',
+                                            max_length=model_batch['attention_mask'].shape[1],
+                                            truncation=True,
                                             add_special_tokens=False, return_tensors='pt')['offset_mapping']
                 spans_offsets, words_offsets = get_spans_offsets(input_texts, nlp, matcher)
 

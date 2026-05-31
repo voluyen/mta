@@ -91,6 +91,7 @@ OPTS+=" --temperature 1.0"
 # distillm
 OPTS+=" --student-gen"
 
+# MTA
 OPTS+=" --teacher_layer_mapping 4 8 16"
 OPTS+=" --student_layer_mapping 4 8 16"
 OPTS+=" --split_layer_mapping 0 1 3 3"

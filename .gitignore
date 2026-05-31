@@ -50,3 +50,6 @@ ipython_config.py
 # OS
 .DS_Store
 Thumbs.db
+
+distillm-master/processed_data/
+data/

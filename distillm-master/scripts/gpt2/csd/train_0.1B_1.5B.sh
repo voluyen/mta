@@ -1,6 +1,6 @@
 #! /bin/bash
 
-GPUS=(0 1 2 3)
+GPUS=(0)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 export TOKENIZERS_PARALLELISM=false
 
@@ -18,12 +18,13 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=./distillm-master
-CKPT_NAME="qwen1.5-0.5B"
-CKPT="Qwen/Qwen1.5-0.5B"
-TEACHER_CKPT_NAME="qwen1.5-1.8B"
-TEACHER_CKPT="VoCuc/Qwen1.5_1.8B_SFT"
+CKPT_NAME="gpt2-base"
+CKPT="openai-community/gpt2"
+TEACHER_CKPT_NAME="xlarge-sft"
+TEACHER_CKPT="MiniLLM/teacher-gpt2-1.5B"
 # data
-DATA_DIR="${BASE_PATH}/processed_data/dolly/full/qwen/"
+DATA_DIR="${BASE_PATH}/processed_data/dolly/full/gpt2/"
+# LM_DATA_DIR="${BASE_PATH}/processed_data/openwebtext/gpt2/512/10M/"
 # hp
 BATCH_SIZE=16
 LR=0.0001
@@ -33,7 +34,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen1.5/spandistillm_0.5B_1.8B_entropy"
+SAVE_PATH="${BASE_PATH}/results/gpt2/train/csd_0.1B_1.5B"
 # seed
 SEED=42
 
@@ -46,7 +47,6 @@ OPTS+=" --teacher-model-path ${TEACHER_CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --teacher-ckpt-name ${TEACHER_CKPT_NAME}"
 OPTS+=" --teacher-model-fp16"
-OPTS+=" --model-type qwen"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
@@ -64,14 +64,14 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 1.0"
-OPTS+=" --w-span-loss 2.0"
+# OPTS+=" --w-span-loss 2.0"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 128"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
-OPTS+=" --eval-gen"
+# OPTS+=" --eval-gen"
 OPTS+=" --save-interval -1"
 OPTS+=" --eval-interval -1"
 OPTS+=" --log-interval 10"
@@ -83,19 +83,14 @@ OPTS+=" --seed ${SEED}"
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config.json"
 # type
-OPTS+=" --type adaptive-srkl"
+OPTS+=" --type adaptive-csd"
 # gen
 OPTS+=" --do-sample"
 OPTS+=" --top-k 0"
 OPTS+=" --top-p 1.0"
 OPTS+=" --temperature 1.0"
 # distillm
-OPTS+=" --student-gen"
-
-OPTS+=" --teacher_layer_mapping 14 16 18 20 22 24"
-OPTS+=" --student_layer_mapping 14 16 18 20 22 24"
-OPTS+=" --split_layer_mapping 0 1 6 6"
-OPTS+=" --entropy_weight"
+# OPTS+=" --student-gen"
 
 OPTS+=" --gen-num-beams 1"
 OPTS+=" --gen-top-p 1.0"

@@ -18,23 +18,23 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # model
 BASE_PATH=./distillm-master
-CKPT_NAME="gpt2-base"
-CKPT="openai-community/gpt2"
-TEACHER_CKPT_NAME="xlarge-sft"
-TEACHER_CKPT="MiniLLM/teacher-gpt2-1.5B"
+
+CKPT_NAME="opt-1.3B"
+CKPT="facebook/opt-1.3b"
+TEACHER_CKPT_NAME="opt-1.3B"
+TEACHER_CKPT="MiniLLM/SFT-OPT-6.7B"
 # data
-DATA_DIR="${BASE_PATH}/processed_data/dolly/full/gpt2/"
-# LM_DATA_DIR="${BASE_PATH}/processed_data/openwebtext/gpt2/512/10M/"
+DATA_DIR="${BASE_PATH}/processed_data/dolly/full/opt/"
 # hp
 BATCH_SIZE=16
-LR=0.0001
+LR=0.0005
 GRAD_ACC=1
 EVAL_BATCH_SIZE=64
 EPOCHS=5
 # length
 MAX_LENGTH=256
 # runtime
-SAVE_PATH="${BASE_PATH}/results/gpt2/train/spancsd_0.1B_1.5B_entropy"
+SAVE_PATH="${BASE_PATH}/results/opt/train/spancsd_1.3B_6.7B"
 # seed
 SEED=42
 
@@ -48,6 +48,8 @@ OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --teacher-ckpt-name ${TEACHER_CKPT_NAME}"
 OPTS+=" --teacher-model-fp16"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
+OPTS+=" --model-type opt"
+# OPTS+=" --gradient-checkpointing"
 # data
 OPTS+=" --data-dir ${DATA_DIR}"
 # OPTS+=" --lm-data-dir ${LM_DATA_DIR}"
@@ -64,19 +66,26 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 1.0"
-OPTS+=" --w-span-loss 2.0"
+OPTS+=" --w-span-loss 3.0"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 128"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
-OPTS+=" --eval-gen"
+# OPTS+=" --eval-gen"
 OPTS+=" --save-interval -1"
 OPTS+=" --eval-interval -1"
 OPTS+=" --log-interval 10"
 OPTS+=" --mid-log-num -1"
 OPTS+=" --save ${SAVE_PATH}"
+# lora
+OPTS+=" --peft lora"
+OPTS+=" --do-train"
+# OPTS+=" --peft-name ${PEFT_CKPT_NAME}"
+# OPTS+=" --peft-path ${PEFT_CKPT}"
+# OPTS+=" --teacher-peft-name ${TEACHER_PEFT_CKPT_NAME}"
+# OPTS+=" --teacher-peft-path ${TEACHER_PEFT_CKPT}"
 # seed
 OPTS+=" --seed ${SEED}"
 # deepspeed
@@ -91,11 +100,6 @@ OPTS+=" --top-p 1.0"
 OPTS+=" --temperature 1.0"
 # distillm
 # OPTS+=" --student-gen"
-
-OPTS+=" --teacher_layer_mapping 24 36 48"
-OPTS+=" --student_layer_mapping 6 9 12"
-OPTS+=" --split_layer_mapping 0 1 3 3"
-OPTS+=" --entropy_weight"
 
 OPTS+=" --gen-num-beams 1"
 OPTS+=" --gen-top-p 1.0"
@@ -113,7 +117,4 @@ CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/span_finetune.py ${OPTS} $@"
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"
 mkdir -p ${SAVE_PATH}
-CODE_BASE=HF ${CMD}
-
-# ${CMD} \
-# >> ${SAVE_PATH}/train.log 2>&1 &
+${CMD}

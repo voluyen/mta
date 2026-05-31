@@ -1,6 +1,6 @@
 #! /bin/bash
 
-GPUS=(1)
+GPUS=(0)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 export TOKENIZERS_PARALLELISM=false
 
@@ -92,6 +92,7 @@ OPTS+=" --temperature 1.0"
 # distillm
 OPTS+=" --student-gen"
 
+# MTA
 OPTS+=" --teacher_layer_mapping 14 16 18 20 22 24"
 OPTS+=" --student_layer_mapping 14 16 18 20 22 24"
 OPTS+=" --split_layer_mapping 0 1 6 6"

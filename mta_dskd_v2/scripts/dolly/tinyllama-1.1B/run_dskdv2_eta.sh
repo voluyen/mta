@@ -49,7 +49,7 @@ CRITERION="dual_space_kd_v2_with_eta"
 KD_OBJ="forward_kl"   # [forward_kl, reverse_kl, js_divergence, skewed_forward_kl, skewed_reverse_kl, adaptive_kl]
 CONFIG="${KD_OBJ}-${PRECISION}"
 SETTING="${CONFIG}__teacher_${TEACHER_MODEL_NAME}__kd^rate${KD_RATE}__kd^temp${KD_TEMP}__epoch${EPOCH}__bsz${BATCH_SIZE}x${GRAD_ACC}x${GPUS_PER_NODE}x${NNODES}_$((BATCH_SIZE * GRAD_ACC * GPUS_PER_NODE * NNODES))__lr${LR}__proj^lr${PROJECTOR_LR}"
-SAVE_PATH="${BASE_PATH}/outputs/3005_dskd/${CKPT_TYPE}/${CKPT_NAME}/${TASK}/${SETTING}"
+SAVE_PATH="${BASE_PATH}/outputs/${CKPT_TYPE}/${CKPT_NAME}/${TASK}/${SETTING}"
 SAVE_BEST_N_CKPTS=5
 # seed
 SEED=10

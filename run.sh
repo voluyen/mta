@@ -15,7 +15,7 @@ mkdir -p "${LOG_DIR}"
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
-RESULTS_DIR="${REPO_ROOT}/distillm-master/results"
+RESULTS_DIR="${REPO_ROOT}/distillm/results"
 MOUNT_DIR="/mnt/mta/span_csd/"
 
 run_script() {
@@ -96,11 +96,11 @@ setup_env() {
 run_training() {
     log "=== Training ==="
 
-    run_script "qwen1.5_csd"          "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
-    # run_script "qwen1.5_spancsd"          "distillm-master/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
-    # run_script "gpt2_ablation_word"    "distillm-master/scripts/gpt2/ablation/word_level.sh"
-    # run_script "gpt2_ablation_phrase"  "distillm-master/scripts/gpt2/ablation/phrase_level.sh"
-    # run_script "opt_spancsd"           "distillm-master/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"
+    run_script "qwen1.5_csd"          "distillm/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
+    # run_script "qwen1.5_spancsd"          "distillm/scripts/qwen1.5/spancsd/train_0.5B_1.8B_spancsd.sh"
+    # run_script "gpt2_ablation_word"    "distillm/scripts/gpt2/ablation/word_level.sh"
+    # run_script "gpt2_ablation_phrase"  "distillm/scripts/gpt2/ablation/phrase_level.sh"
+    # run_script "opt_spancsd"           "distillm/scripts/opt/spancsd/train_6.7B_1.3B_teacher_lora.sh"
 }
 
 # =============================================================================

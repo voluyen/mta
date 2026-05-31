@@ -21,7 +21,7 @@ MTA/
 │   ├── arguments.py            # Training config dataclass
 │   └── utils.py                # Span extraction helpers
 ├── scripts/                    # Eval scripts for trained checkpoints
-├── distillm-master/            # Main training framework (DeepSpeed + torchrun)
+├── distillm/            # Main training framework (DeepSpeed + torchrun)
 │   ├── span_finetune.py        # Primary training entry point
 │   ├── finetune.py             # Baseline (non-span) training entry point
 │   ├── distillm/               # DistiLLM KD loss implementations
@@ -31,7 +31,7 @@ MTA/
 │   │   ├── qwen1.5/...
 │   │   └── qwen2.5/...
 │   └── configs/deepspeed/      # DeepSpeed ZeRO configs
-├── distillm-2-master/          # DistiLLM-2 variant
+├── distillm-2/          # DistiLLM-2 variant
 └── data/dolly/                 # Primary dataset (train/dev/valid .jsonl)
 ```
 
@@ -39,13 +39,13 @@ MTA/
 
 There are two separate pipelines with different APIs:
 
-**1. `distillm-master/` (primary)** — DeepSpeed + `torchrun`, uses `--kebab-case` args, called via `span_finetune.py` or `finetune.py`. This is where most experiments run.
+**1. `distillm/` (primary)** — DeepSpeed + `torchrun`, uses `--kebab-case` args, called via `span_finetune.py` or `finetune.py`. This is where most experiments run.
 
 **2. `src/` (custom)** — Single-process or multi-GPU without DeepSpeed, uses HuggingFace `HfArgumentParser` with `Arguments` dataclass (snake_case fields). Entry: `run_distill_llm.py`.
 
 ## Common Commands
 
-### Install dependencies (distillm-master)
+### Install dependencies (distillm)
 ```bash
 # Conda environment first:
 conda install pytorch==2.4.0 torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
@@ -53,23 +53,23 @@ pip install transformers==4.43.2 vllm==0.5.4 peft==0.9.0 trl==0.9.6 deepspeed==0
 pip install accelerate datasets sentencepiece protobuf rouge-score nltk numerize torchtyping rich
 ```
 
-### Training (distillm-master pipeline)
+### Training (distillm pipeline)
 ```bash
 # SpanDistilLM — GPT2 0.1B student from 1.5B teacher
-bash distillm-master/scripts/gpt2/spandistillm/train_0.1B_1.5B.sh
+bash distillm/scripts/gpt2/spandistillm/train_0.1B_1.5B.sh
 
 # SpanDistilLM with entropy weight
-bash distillm-master/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh
+bash distillm/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh
 
 # Baselines: distillm, fdd, spanfdd, sft
-bash distillm-master/scripts/gpt2/distillm/train_0.1B_1.5B.sh
-bash distillm-master/scripts/gpt2/sft/sft_base.sh
+bash distillm/scripts/gpt2/distillm/train_0.1B_1.5B.sh
+bash distillm/scripts/gpt2/sft/sft_base.sh
 ```
 
 ### Data preparation
 ```bash
-bash distillm-master/scripts/gpt2/tools/process_data_dolly.sh
-bash distillm-master/scripts/gpt2/tools/generate_data_seqkd.sh   # SeqKD teacher data
+bash distillm/scripts/gpt2/tools/process_data_dolly.sh
+bash distillm/scripts/gpt2/tools/generate_data_seqkd.sh   # SeqKD teacher data
 ```
 
 ### Evaluation
@@ -99,13 +99,13 @@ The core novelty: instead of aligning all hidden states, the model aligns spans 
 ```
 
 ### Teacher/Student Device Split
-In `src/`, teacher and student can be placed on separate GPUs (`--teach_device cuda:1 --student_device cuda:0`). In `distillm-master/`, DeepSpeed handles device placement.
+In `src/`, teacher and student can be placed on separate GPUs (`--teach_device cuda:1 --student_device cuda:0`). In `distillm/`, DeepSpeed handles device placement.
 
 ### Entropy Weight
-Add `--entropy_weight` flag to weight KD loss by token entropy (currently supported for DistiLLM and CSD variants only). See `distillm-master/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh`.
+Add `--entropy_weight` flag to weight KD loss by token entropy (currently supported for DistiLLM and CSD variants only). See `distillm/scripts/gpt2/spandistillm/train_0.1B_1.5B_entropy.sh`.
 
 ### Supported Model Families
 GPT-2, OPT, LLaMA/LLaMA-2, Qwen1.5, Qwen2.5, Mistral, TinyLLaMA, MiniCPM. Model type is passed as `--model_type` (e.g., `qwen`, `llama`, `gpt2`) and controls tokenizer padding behavior.
 
 ### Results Layout
-Checkpoints are saved to `distillm-master/results/<model>/<run_name>/<step>/`. Eval outputs go to `eval_outputs/`.
+Checkpoints are saved to `distillm/results/<model>/<run_name>/<step>/`. Eval outputs go to `eval_outputs/`.

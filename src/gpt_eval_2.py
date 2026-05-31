@@ -77,7 +77,7 @@ def gpt_evaluate(ground_truth_path, eval_path):
 
 
 
-folder_path = r"eval_gen_outputs/distillm-master/results/qwen1.5"
+folder_path = r"eval_gen_outputs/distillm/results/qwen1.5"
 
 gt_map = {}
 for root, dirs, files in os.walk(folder_path):

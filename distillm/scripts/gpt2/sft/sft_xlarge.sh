@@ -13,7 +13,7 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
                   --master_port $MASTER_PORT"
 
 # model
-BASE_PATH=${1-"/home/MiniLLM"}
+BASE_PATH=${1-"./distillm"}
 CKPT_NAME="gpt2-xlarge"
 CKPT="${BASE_PATH}/checkpoints/${CKPT_NAME}/"
 # CKPT="gpt2-xl" # download automatically

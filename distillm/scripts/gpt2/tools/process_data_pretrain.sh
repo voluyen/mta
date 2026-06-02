@@ -1,4 +1,4 @@
-BASE_PATH=${1}
+BASE_PATH=${1-"./distillm"}
 
 MAX_LENGTH=512
 

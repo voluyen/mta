@@ -1,4 +1,4 @@
-BASE_PATH=${1}
+BASE_PATH=${1-"./distillm"}
 
 export TF_CPP_MIN_LOG_LEVEL=3
 

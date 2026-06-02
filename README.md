@@ -12,7 +12,9 @@ This repository bundles several knowledge-distillation (KD) codebases for compre
 | `distillm-2/` | DistiLLM-2 variant of the above framework. |
 | `src/` | Custom single-/multi-GPU trainer pipeline (no DeepSpeed); span-based hidden-state alignment. |
 | `DSKDv2/` | **DSKD v2 + MTA** — Dual-Space KD with Multi-layer Token-Aligned span/feature distillation. |
+| `DWA/` | **DWA-MTA** — Dynamic Warping Alignment (Soft-DTW) on top of Dual-Space KD for cross-tokenizer sequence alignment. |
 | `AMiD/` | **AMiD** (ICLR 2026) — KD with α-mixture assistant distribution; official paper implementation. |
+| `eval/` | **Standalone evaluation package** — ROUGE-L on dolly / self-instruct / vicuna / s-ni for any trained checkpoint (see [§5](#5-standalone-evaluation-eval)). |
 | `data/dolly/` | Primary instruction dataset (`train` / `dev` / `valid` `.jsonl`). |
 
 ---
@@ -64,11 +66,9 @@ bash distillm/scripts/gpt2/sft/sft_base.sh
 
 ### Evaluation
 
-```bash
-bash scripts/eval_gpt2_0.1B.sh         # GPT2 0.1B
-bash scripts/eval_span_gpt2_0.1B.sh    # Span variant
+Evaluate a checkpoint produced by the `src/` pipeline directly:
 
-# Direct call:
+```bash
 python src/run_eval.py \
   --train_data data/dolly/train.jsonl \
   --test_data data/dolly/valid.jsonl \
@@ -76,6 +76,8 @@ python src/run_eval.py \
   --tokenizer openai-community/gpt2 \
   --student_device cuda:0
 ```
+
+For multi-benchmark ROUGE-L (dolly / self-instruct / vicuna / s-ni) on **any** trained checkpoint, use the standalone `eval/` package — see [§5. Standalone evaluation](#5-standalone-evaluation-eval).
 
 **Supported model families:** GPT-2, OPT, LLaMA/LLaMA-2, Qwen1.5, Qwen2.5, Mistral, TinyLLaMA, MiniCPM (`--model_type` controls tokenizer padding). Checkpoints save to `distillm/results/<model>/<run_name>/<step>/`; eval outputs to `eval_outputs/`.
 
@@ -219,15 +221,98 @@ bash ./scripts/gpt2/eval/run_eval.sh ${/PATH/TO/AMiD_CKPT} ${MASTER_PORT}
 ### Citation
 
 ```bib
-@inproceedings{
-shin2026amid,
-title={{AM}iD: Knowledge Distillation for {LLM}s with $\alpha$-mixture Assistant Distribution},
-author={Donghyeok Shin and Yeongmin Kim and Suhyeon Jo and Byeonghu Na and Il-chul Moon},
-booktitle={The Fourteenth International Conference on Learning Representations},
-year={2026},
-url={https://openreview.net/forum?id=7WPJ0EgPdW}
-}
+
 ```
+
+---
+
+## 4. DWA-MTA — Dynamic Warping Alignment (`DWA/`)
+
+**DWA-MTA** integrates a Soft-DTW (Dynamic Time Warping) alignment loss into the Dual-Space KD framework to align student/teacher sequences across mismatched tokenizers. The main loss is `--criterion dwa_kd` (`total = ce_rate·CE + kd_rate·KD + dtw_rate·DTW`).
+
+### Setup
+
+```bash
+cd DWA
+bash install.sh                       # installs deps (creates/uses the dwa_mta env)
+python -m spacy download en_core_web_sm
+export PYTHONPATH=$(pwd)
+```
+
+Data lives under `DWA/data/<task>/` as `train.jsonl` / `dev.jsonl` / `test.jsonl`.
+
+### Training
+
+Run scripts **from the `DWA/` root** (they use `BASE_PATH=.`). Entry point is `code/distillation.py` via `torchrun` + DeepSpeed:
+
+```bash
+bash scripts/gpt2/dwa_kd_gpt2_base.sh          # DWA-KD, GPT-2 base student
+bash scripts/gpt2/span_dwa_kd_gpt2_base.sh     # span variant
+```
+
+`run.sh` orchestrates the full multi-GPU sweep across model families (gpt2 / gpt2xl / gpt2_medium / opt / tinyllama). Key DTW knobs: `--dtw-rate`, `--dtw-gamma[-start/end/steps]`, `--dtw-band-source {cma,sdtw}`, `--dtw-band-width`, `--dtw-hidden-layers`. See `DWA/CLAUDE.md` for the full criterion/argument reference.
+
+### Evaluation
+
+```bash
+bash scripts/eval/run_eval.sh <checkpoint_path> [batch_size]
+```
+
+Or use the standalone `eval/` package below for a uniform multi-benchmark report.
+
+---
+
+## 5. Standalone evaluation (`eval/`)
+
+A self-contained package that scores **any** trained checkpoint on four instruction-following benchmarks (**dolly, self-instruct, vicuna, s-ni**) with ROUGE-L F1, averaged over 5 seeds. It depends only on `transformers` + `peft` (no training stack), so it can run on a separate machine from training.
+
+### Step 1 — Set up the environment
+
+```bash
+cd eval
+bash setup_env.sh          # creates ./.venv and installs torch (CUDA 12.4) + requirements.txt
+# (manual alternative): python -m venv .venv && .venv/bin/pip install -r requirements.txt
+```
+
+### Step 2 — Data
+
+The four benchmark `valid.jsonl` files are already bundled under `eval/data/` (`dolly/`, `self-inst/`, `sinst/11_/`, `vicuna/`). No download needed. `run_eval.py` resolves them relative to the package, or override with `EVAL_DATA_DIR=/path/to/data`.
+
+### Step 3 — Obtain a checkpoint
+
+Train one with any pipeline in this repo (§1–§4), or download a released checkpoint, e.g.:
+
+```bash
+hf download <hf-repo-id> --include "<path/in/repo>/**" --local-dir ./checkpoints
+```
+
+### Step 4 — Evaluate one checkpoint
+
+```bash
+# full fine-tuned checkpoint
+bash scripts/eval_checkpoint.sh ./checkpoints/<run>/<step>
+
+# LoRA adapter on a base model
+PEFT=lora BASE_MODEL=openai-community/gpt2 \
+    bash scripts/eval_checkpoint.sh ./adapters/<run>
+```
+
+The script is path-generalized (resolves everything relative to the repo, runs from any CWD) and **resumes** — a checkpoint whose 4 benchmark scores are already in the log is skipped.
+
+| Env var | Default | Meaning |
+|---------|---------|---------|
+| `PEFT` | `full` | `full` loads the checkpoint directly; `lora` loads it as an adapter on `BASE_MODEL`. |
+| `BASE_MODEL` | `openai-community/gpt2` | Base model for LoRA checkpoints. |
+| `TOKENIZER` | checkpoint dir (full) / `BASE_MODEL` (lora) | Tokenizer to load. |
+| `BATCH_SIZE` | `64` | Eval batch size. |
+| `DEVICE` | `cuda:0` | CUDA device. |
+| `SEED` | `42` | Random seed. |
+
+### Step 5 — Read the results
+
+Outputs land in `eval/eval_outputs/<name>/<batch>bsz/`:
+- `eval.json` — ROUGE-L F1 per benchmark + status.
+- `eval.log` — full run log (per-seed and per-benchmark summary lines).
 
 ---
 

@@ -1,5 +1,7 @@
 # Claude Code & IDE
+# Ignore every CLAUDE.md, at the root and in any subdirectory
 CLAUDE.md
+**/CLAUDE.md
 .claude/
 .vscode/
 .idea/
